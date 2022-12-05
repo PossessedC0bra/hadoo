@@ -1,6 +1,5 @@
 module Hadoo.Pages.Index where
 
-import Control.Monad.IO.Class (liftIO)
 import Hadoo.Enums
 import Hadoo.Pages.Layout
 import Hadoo.Persistence
@@ -18,4 +17,4 @@ createLane state = do
   return (Html.div "lane" (Html.h2 (show state ++ " (" ++ show (length htmlItems) ++ ")") : htmlItems))
 
 createItem :: State -> (Int, String) -> Html
-createItem _ (title, text) = Html.div "item" [Html.h2 (show title), text]
+createItem _ (_, text) = Html.div "item" [text]
