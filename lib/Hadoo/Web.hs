@@ -5,7 +5,7 @@ module Hadoo.Web where
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.Text.Lazy as LT
 import qualified Hadoo.Pages.Index
-import Hadoo.Persistence (deleteItem, initPersistence)
+import Hadoo.Persistence
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Web.Scotty
 
@@ -20,7 +20,12 @@ main = do
     post "/items" index
     get "/items/:state/:nr/edit" index
     post "/items/:state/:nr" index
-    post "/items/:state/:nr/move/:nextState" index
+    post "/items/:state/:nr/move/:nextState" $ do
+      oldState <- fmap read (param "state")
+      nr <- param "nr"
+      newState <- fmap read (param "nextState")
+      liftIO (moveItem oldState newState nr)
+      redirect "/"
 
     post "/items/:state/:nr/delete" $ do
       state <- fmap read (param "state")

@@ -20,6 +20,14 @@ readItem baseDir filename = do
   content <- readFile filePath
   return (extractId filename, content)
 
+-- MOVE
+
+moveItem :: State -> State -> Int -> IO ()
+moveItem origin destination itemId = do
+  let oldFile = getStateDirectory origin ++ padId itemId ++ ".txt"
+  let newFile = getStateDirectory destination ++ padId itemId ++ ".txt"
+  renameFile oldFile newFile
+
 -- DELETE
 
 deleteItem :: State -> Int -> IO ()

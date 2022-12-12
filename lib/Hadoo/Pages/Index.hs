@@ -7,20 +7,32 @@ import Html
 
 build :: IO Html
 build = do
-  lanes <- mapM createLane (values :: [State])
+  lanes <- mapM lane (values :: [State])
   return (Hadoo.Pages.Layout.base (Html.div "" [Html.h1 "Hadoo", Html.div "container" lanes]))
 
-createLane :: State -> IO Html
-createLane state = do
+lane :: State -> IO Html
+lane state = do
   items <- loadItems state
-  let htmlItems = map (createItem state) items
+  let htmlItems = map (item state) items
   return (Html.div "lane" (Html.h2 (show state ++ " (" ++ show (length htmlItems) ++ ")") : htmlItems))
 
-createItem :: State -> (Int, String) -> Html
-createItem state (id, text) = Html.div "item" [Html.pre text, createItemButtons state id]
+item :: State -> (Int, String) -> Html
+item state (id, text) = Html.div "item" (Html.pre text : itemButtons state id)
 
-createItemButtons :: State -> Int -> Html
-createItemButtons state id = createItemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/delete") "Delete"
+itemButtons :: State -> Int -> [Html]
+itemButtons state id
+  | state == minBound = [moveRightButton state id, deleteButton state id]
+  | state == maxBound = [moveLeftButton state id, deleteButton state id]
+  | otherwise = [moveLeftButton state id, moveRightButton state id, deleteButton state id]
 
-createItemButton :: String -> String -> String -> Html
-createItemButton method action text = Html.form "inline" method action (Html.button text)
+moveLeftButton :: State -> Int -> Html
+moveLeftButton state id = itemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (pred state)) "<"
+
+moveRightButton :: State -> Int -> Html
+moveRightButton state id = itemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (succ state)) ">"
+
+deleteButton :: State -> Int -> Html
+deleteButton state id = itemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/delete") "Delete"
+
+itemButton :: String -> String -> String -> Html
+itemButton method action text = Html.form "inline" method action (Html.button text)
