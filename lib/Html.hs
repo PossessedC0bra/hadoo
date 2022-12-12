@@ -1,6 +1,5 @@
 module Html where
 
-import Control.Monad.Trans.Select (Select)
 import Data.List (intersperse)
 
 -- | Type Alias für Html Strings
