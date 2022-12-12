@@ -25,7 +25,8 @@ readItem baseDir filename = do
 moveItem :: State -> State -> Int -> IO ()
 moveItem origin destination itemId = do
   let oldFile = getStateDirectory origin ++ idToFilename itemId ++ ".txt"
-  let newFile = getStateDirectory destination ++ idToFilename itemId ++ ".txt"
+  newId <- findNextId destination
+  let newFile = getStateDirectory destination ++ idToFilename newId ++ ".txt"
   renameFile oldFile newFile
 
 -- DELETE
@@ -46,3 +47,10 @@ filenameToId = read . takeWhile (/= '.')
 
 idToFilename :: Int -> String
 idToFilename = printf "%03d"
+
+findNextId :: State -> IO Int
+findNextId state = do
+  let baseDir = getStateDirectory state
+  files <- listDirectory baseDir
+  let ids = -1 : map filenameToId files
+  return (maximum ids + 1)
