@@ -19,15 +19,3 @@ stateOptions = map (\s -> (show s, show s)) (values :: [State])
 
 saveButton :: Html
 saveButton = Html.formButton "POST" "/items" "Create"
-
--- <form method='post' action='/items'>
---   <label for='states'>State: </label>
---   <select name='state' id='states'>
---     <option value='Todo'>Todo</option>
---     <option value='Started'>Started</option>
---   </select>
---   <br>
---   <textarea name='content' rows='12' cols='60'></textarea>
---   <br>
---   <input type='submit' value='Create'></input>
--- </form>
