@@ -28,6 +28,15 @@ body = e "body"
 div :: String -> [Html] -> Html
 div clazz = ea "div" [("class", clazz)] . concat
 
+pre :: Html -> Html
+pre = e "pre"
+
+form :: String -> String -> String -> Html -> Html
+form clazz method action = eaClass "form" clazz [("method", method), ("action", action)]
+
+button :: Html -> Html
+button = ea "button" [("type", "submit")]
+
 h1 :: Html -> Html
 h1 = e "h1"
 
@@ -43,6 +52,9 @@ eClass :: String -> String -> Html -> Html
 eClass tag className = ea tag [("class", className)]
 
 -- | Erzeugt ein Element mit Attributen
+eaClass :: String -> String -> [(String, String)] -> Html -> Html
+eaClass tag className attrs = ea tag (("class", className) : attrs)
+
 ea :: String -> [(String, String)] -> Html -> Html
 ea tag attrs kids = concat $ ["<", tag] ++ attrsHtml attrs ++ [">", kids, "</", tag, ">"]
   where

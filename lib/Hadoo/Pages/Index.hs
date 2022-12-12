@@ -17,4 +17,10 @@ createLane state = do
   return (Html.div "lane" (Html.h2 (show state ++ " (" ++ show (length htmlItems) ++ ")") : htmlItems))
 
 createItem :: State -> (Int, String) -> Html
-createItem _ (_, text) = Html.div "item" [text]
+createItem state (id, text) = Html.div "item" [Html.pre text, createItemButtons state id]
+
+createItemButtons :: State -> Int -> Html
+createItemButtons state id = createItemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/delete") "Delete"
+
+createItemButton :: String -> String -> String -> Html
+createItemButton method action text = Html.form "inline" method action (Html.button text)

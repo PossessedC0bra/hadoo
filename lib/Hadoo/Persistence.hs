@@ -2,6 +2,7 @@ module Hadoo.Persistence where
 
 import Hadoo.Enums
 import System.Directory
+import Text.Printf
 
 initPersistence :: IO ()
 initPersistence = do
@@ -19,8 +20,21 @@ readItem baseDir filename = do
   content <- readFile filePath
   return (extractId filename, content)
 
+-- DELETE
+
+deleteItem :: State -> Int -> IO ()
+deleteItem state itemId = do
+  let baseDir = getStateDirectory state
+  let filePath = baseDir ++ padId itemId ++ ".txt"
+  removeFile filePath
+
+-- UTIL
+
 extractId :: String -> Int
 extractId = read . takeWhile (/= '.')
 
 getStateDirectory :: State -> FilePath
 getStateDirectory state = "data/" ++ show state ++ "/"
+
+padId :: Int -> String
+padId = printf "%03d"
