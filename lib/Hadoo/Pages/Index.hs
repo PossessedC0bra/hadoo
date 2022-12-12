@@ -24,15 +24,18 @@ item state (id, text) = Html.div "item" (Html.pre text : itemButtons state id)
 
 itemButtons :: State -> Int -> [Html]
 itemButtons state id
-  | state == minBound = [moveRightButton state id, deleteButton state id]
-  | state == maxBound = [moveLeftButton state id, deleteButton state id]
-  | otherwise = [moveLeftButton state id, moveRightButton state id, deleteButton state id]
+  | state == minBound = [moveRightButton state id, editButton state id, deleteButton state id]
+  | state == maxBound = [moveLeftButton state id, editButton state id, deleteButton state id]
+  | otherwise = [moveLeftButton state id, moveRightButton state id, editButton state id, deleteButton state id]
 
 moveLeftButton :: State -> Int -> Html
 moveLeftButton state id = formButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (pred state)) "<"
 
 moveRightButton :: State -> Int -> Html
 moveRightButton state id = formButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (succ state)) ">"
+
+editButton :: State -> Int -> Html
+editButton state id = formButton "GET" ("/items/" ++ show state ++ "/" ++ show id ++ "/edit") "Edit"
 
 deleteButton :: State -> Int -> Html
 deleteButton state id = formButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/delete") "Delete"

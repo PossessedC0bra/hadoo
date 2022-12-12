@@ -4,6 +4,7 @@ module Hadoo.Web where
 
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.Text.Lazy as LT
+import qualified Hadoo.Pages.EditItem
 import qualified Hadoo.Pages.Index
 import qualified Hadoo.Pages.NewItem
 import Hadoo.Persistence
@@ -20,7 +21,8 @@ main = do
     get "/items" indexPage
     get "/new" newItemPage
     post "/items" createItemAction
-    get "/items/:state/:nr/edit" indexPage
+    get "/items/:state/:nr/edit" editItemPage
+    post "/items/:state/:nr" editItemAction
     post "/items/:state/:nr/move/:nextState" moveItemAction
     post "/items/:state/:nr/delete" deleteItemAction
     get "/styles.css" styles
@@ -37,6 +39,13 @@ newItemPage = do
   page <- liftIO Hadoo.Pages.NewItem.build
   toHtml page
 
+editItemPage :: ActionM ()
+editItemPage = do
+  state <- fmap read (param "state")
+  nr <- param "nr"
+  page <- liftIO (Hadoo.Pages.EditItem.build state nr)
+  toHtml page
+
 -- ACTIONS
 
 createItemAction :: ActionM ()
@@ -44,6 +53,14 @@ createItemAction = do
   state <- fmap read (param "state")
   content <- multiLineTextParam "content"
   liftIO (createItem state content)
+  redirect "/"
+
+editItemAction :: ActionM ()
+editItemAction = do
+  state <- fmap read (param "state")
+  nr <- param "nr"
+  content <- multiLineTextParam "content"
+  liftIO (editItem state nr content)
   redirect "/"
 
 moveItemAction :: ActionM ()

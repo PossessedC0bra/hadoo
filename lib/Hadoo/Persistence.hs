@@ -31,7 +31,18 @@ readItem baseDir filename = do
   content <- readFile filePath
   return (filenameToId filename, content)
 
--- MOVE
+loadItem :: State -> Int -> IO (Int, String)
+loadItem state itemId = do
+  let filePath = getStateDirectory state ++ "/" ++ idToFilename itemId ++ ".txt"
+  content <- readFile filePath
+  return (itemId, content)
+
+-- UPDATE
+
+editItem :: State -> Int -> String -> IO ()
+editItem state itemId content = do
+  let filePath = getStateDirectory state ++ idToFilename itemId ++ ".txt"
+  writeFile filePath content
 
 moveItem :: State -> State -> Int -> IO ()
 moveItem origin destination itemId = do

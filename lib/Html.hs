@@ -45,8 +45,8 @@ select id name options = formField "select" id name [] (concatMap option options
 option :: (String, String) -> Html
 option (value, text) = ea "option" [("value", value)] text
 
-textarea :: String -> String -> Int -> Int -> Html
-textarea id name rows cols = formField "textarea" id name [("rows", show rows), ("cols", show cols)] ""
+textarea :: String -> String -> Int -> Int -> String -> Html
+textarea id name rows cols = formField "textarea" id name [("rows", show rows), ("cols", show cols)]
 
 input :: String -> String -> Html
 input submitType value = ea "input" [("type", submitType), ("value", value)] ""
