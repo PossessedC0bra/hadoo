@@ -41,7 +41,7 @@ newItemPage = do
 
 createItemAction :: ActionM ()
 createItemAction = do
-  state <- param "state"
+  state <- fmap read (param "state")
   content <- multiLineTextParam "content"
   liftIO (createItem state content)
   redirect "/"

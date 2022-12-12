@@ -3,7 +3,6 @@ module Hadoo.Persistence where
 import Hadoo.Enums
 import System.Directory
 import Text.Printf
-import Web.Scotty (file)
 
 initPersistence :: IO ()
 initPersistence = do
@@ -11,10 +10,10 @@ initPersistence = do
 
 -- CREATE
 
-createItem :: String -> String -> IO ()
+createItem :: State -> String -> IO ()
 createItem state content = do
-  newId <- findNextId (read state)
-  let filePath = getStateDirectory (read state) ++ idToFilename newId ++ ".txt"
+  newId <- findNextId state
+  let filePath = getStateDirectory state ++ idToFilename newId ++ ".txt"
   putStrLn filePath
   writeFile filePath content
 
