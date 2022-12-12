@@ -18,14 +18,14 @@ readItem :: FilePath -> FilePath -> IO (Int, String)
 readItem baseDir filename = do
   let filePath = baseDir ++ filename
   content <- readFile filePath
-  return (extractId filename, content)
+  return (filenameToId filename, content)
 
 -- MOVE
 
 moveItem :: State -> State -> Int -> IO ()
 moveItem origin destination itemId = do
-  let oldFile = getStateDirectory origin ++ padId itemId ++ ".txt"
-  let newFile = getStateDirectory destination ++ padId itemId ++ ".txt"
+  let oldFile = getStateDirectory origin ++ idToFilename itemId ++ ".txt"
+  let newFile = getStateDirectory destination ++ idToFilename itemId ++ ".txt"
   renameFile oldFile newFile
 
 -- DELETE
@@ -33,16 +33,16 @@ moveItem origin destination itemId = do
 deleteItem :: State -> Int -> IO ()
 deleteItem state itemId = do
   let baseDir = getStateDirectory state
-  let filePath = baseDir ++ padId itemId ++ ".txt"
+  let filePath = baseDir ++ idToFilename itemId ++ ".txt"
   removeFile filePath
 
 -- UTIL
 
-extractId :: String -> Int
-extractId = read . takeWhile (/= '.')
-
 getStateDirectory :: State -> FilePath
 getStateDirectory state = "data/" ++ show state ++ "/"
 
-padId :: Int -> String
-padId = printf "%03d"
+filenameToId :: String -> Int
+filenameToId = read . takeWhile (/= '.')
+
+idToFilename :: Int -> String
+idToFilename = printf "%03d"
