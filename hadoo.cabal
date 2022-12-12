@@ -18,7 +18,7 @@ common common-properties
 
 library
   import:              common-properties
-  exposed-modules:     Html, Hadoo.Enums, Hadoo.Persistence, Hadoo.Web, Hadoo.Components.Item, Hadoo.Pages.Layout, Hadoo.Pages.Index
+  exposed-modules:     Html, Hadoo.Enums, Hadoo.Persistence, Hadoo.Web, Hadoo.Pages.Layout, Hadoo.Pages.Index
   build-depends:       
   hs-source-dirs:      lib
 
