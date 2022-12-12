@@ -3,10 +3,22 @@ module Hadoo.Persistence where
 import Hadoo.Enums
 import System.Directory
 import Text.Printf
+import Web.Scotty (file)
 
 initPersistence :: IO ()
 initPersistence = do
   mapM_ (createDirectoryIfMissing True . getStateDirectory) (values :: [State])
+
+-- CREATE
+
+createItem :: String -> String -> IO ()
+createItem state content = do
+  newId <- findNextId (read state)
+  let filePath = getStateDirectory (read state) ++ idToFilename newId ++ ".txt"
+  putStrLn filePath
+  writeFile filePath content
+
+-- READ
 
 loadItems :: State -> IO [(Int, String)]
 loadItems state = do

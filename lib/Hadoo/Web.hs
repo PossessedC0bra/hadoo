@@ -5,6 +5,7 @@ module Hadoo.Web where
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.Text.Lazy as LT
 import qualified Hadoo.Pages.Index
+import qualified Hadoo.Pages.NewItem
 import Hadoo.Persistence
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Web.Scotty
@@ -15,34 +16,54 @@ main = do
   scotty 3000 $ do
     middleware logStdoutDev
 
-    get "/" index
-    get "/new" index
-    post "/items" index
-    get "/items/:state/:nr/edit" index
-    post "/items/:state/:nr" index
-    post "/items/:state/:nr/move/:nextState" $ do
-      oldState <- fmap read (param "state")
-      nr <- param "nr"
-      newState <- fmap read (param "nextState")
-      liftIO (moveItem oldState newState nr)
-      redirect "/"
-
-    post "/items/:state/:nr/delete" $ do
-      state <- fmap read (param "state")
-      nr <- param "nr"
-      liftIO (deleteItem state nr)
-      redirect "/"
-
+    get "/" indexPage
+    get "/items" indexPage
+    get "/new" newItemPage
+    post "/items" createItemAction
+    get "/items/:state/:nr/edit" indexPage
+    post "/items/:state/:nr/move/:nextState" moveItemAction
+    post "/items/:state/:nr/delete" deleteItemAction
     get "/styles.css" styles
+
+-- PAGES
+
+indexPage :: ActionM ()
+indexPage = do
+  page <- liftIO Hadoo.Pages.Index.build
+  toHtml page
+
+newItemPage :: ActionM ()
+newItemPage = do
+  page <- liftIO Hadoo.Pages.NewItem.build
+  toHtml page
+
+-- ACTIONS
+
+createItemAction :: ActionM ()
+createItemAction = do
+  state <- param "state"
+  content <- multiLineTextParam "content"
+  liftIO (createItem state content)
+  redirect "/"
+
+moveItemAction :: ActionM ()
+moveItemAction = do
+  oldState <- fmap read (param "state")
+  nr <- param "nr"
+  newState <- fmap read (param "nextState")
+  liftIO (moveItem oldState newState nr)
+  redirect "/"
+
+deleteItemAction :: ActionM ()
+deleteItemAction = do
+  state <- fmap read (param "state")
+  nr <- param "nr"
+  liftIO (deleteItem state nr)
+  redirect "/"
 
 -- | HTML
 toHtml :: String -> ActionM ()
 toHtml = html . LT.pack
-
-index :: ActionM ()
-index = do
-  indexPage <- liftIO Hadoo.Pages.Index.build
-  toHtml indexPage
 
 demo :: ActionM ()
 demo = do

@@ -8,7 +8,10 @@ import Html
 build :: IO Html
 build = do
   lanes <- mapM lane (values :: [State])
-  return (Hadoo.Pages.Layout.base (Html.div "" [Html.h1 "Hadoo", Html.div "container" lanes]))
+  return (Hadoo.Pages.Layout.base (Html.div "container" [Html.h1 "Hadoo", newItemButton, Html.div "lanes" lanes]))
+
+newItemButton :: Html
+newItemButton = formButton "GET" "/new" "New Item"
 
 lane :: State -> IO Html
 lane state = do
@@ -26,13 +29,10 @@ itemButtons state id
   | otherwise = [moveLeftButton state id, moveRightButton state id, deleteButton state id]
 
 moveLeftButton :: State -> Int -> Html
-moveLeftButton state id = itemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (pred state)) "<"
+moveLeftButton state id = formButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (pred state)) "<"
 
 moveRightButton :: State -> Int -> Html
-moveRightButton state id = itemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (succ state)) ">"
+moveRightButton state id = formButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/move/" ++ show (succ state)) ">"
 
 deleteButton :: State -> Int -> Html
-deleteButton state id = itemButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/delete") "Delete"
-
-itemButton :: String -> String -> String -> Html
-itemButton method action text = Html.form "inline" method action (Html.button text)
+deleteButton state id = formButton "POST" ("/items/" ++ show state ++ "/" ++ show id ++ "/delete") "Delete"

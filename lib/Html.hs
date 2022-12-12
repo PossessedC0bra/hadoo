@@ -1,7 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Html where
 
+import Control.Monad.Trans.Select (Select)
 import Data.List (intersperse)
 
 -- | Type Alias für Html Strings
@@ -34,8 +33,29 @@ pre = e "pre"
 form :: String -> String -> String -> Html -> Html
 form clazz method action = eaClass "form" clazz [("method", method), ("action", action)]
 
+label :: String -> Html -> Html
+label for = ea "label" [("for", for)]
+
+formField :: String -> String -> String -> [(String, String)] -> Html -> Html
+formField tag id name attrs = ea tag (("class", "form-field") : ("id", id) : ("name", name) : attrs)
+
+select :: String -> String -> [(String, String)] -> Html
+select id name options = formField "select" id name [] (concatMap option options)
+
+option :: (String, String) -> Html
+option (value, text) = ea "option" [("value", value)] text
+
+textarea :: String -> String -> Int -> Int -> Html
+textarea id name rows cols = formField "textarea" id name [("rows", show rows), ("cols", show cols)] ""
+
+input :: String -> String -> Html
+input submitType value = ea "input" [("type", submitType), ("value", value)] ""
+
 button :: Html -> Html
 button = ea "button" [("type", "submit")]
+
+formButton :: String -> String -> String -> Html
+formButton method action text = Html.form "inline" method action (Html.button text)
 
 h1 :: Html -> Html
 h1 = e "h1"
@@ -43,15 +63,14 @@ h1 = e "h1"
 h2 :: Html -> Html
 h2 = e "h2"
 
--- | Erzeugt ein Element ohne Attribute
+-- ELEMENT UTILITIES
+
 e :: String -> Html -> Html
 e tag = ea tag []
 
--- | Erzeugt ein Element mit klassennamen
 eClass :: String -> String -> Html -> Html
 eClass tag className = ea tag [("class", className)]
 
--- | Erzeugt ein Element mit Attributen
 eaClass :: String -> String -> [(String, String)] -> Html -> Html
 eaClass tag className attrs = ea tag (("class", className) : attrs)
 
