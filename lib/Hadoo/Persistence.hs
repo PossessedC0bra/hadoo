@@ -1,5 +1,6 @@
 module Hadoo.Persistence where
 
+import Data.List (sort)
 import Hadoo.Enums
 import System.Directory
 import Text.Printf
@@ -23,7 +24,7 @@ loadItems :: State -> IO [(Int, String)]
 loadItems state = do
   let baseDir = getStateDirectory state
   files <- listDirectory baseDir
-  mapM (readItem baseDir) files
+  mapM (readItem baseDir) (sort files)
 
 readItem :: FilePath -> FilePath -> IO (Int, String)
 readItem baseDir filename = do
