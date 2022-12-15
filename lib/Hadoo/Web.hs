@@ -82,11 +82,6 @@ deleteItemAction = do
 toHtml :: String -> ActionM ()
 toHtml = html . LT.pack
 
-demo :: ActionM ()
-demo = do
-  demoPage <- liftIO (readFile "static/lanes_example.html")
-  toHtml demoPage
-
 -- | CSS
 styles :: ActionM ()
 styles = do
