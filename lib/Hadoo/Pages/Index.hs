@@ -24,6 +24,7 @@ item state (id, text) = Html.div "item" (Html.pre text : itemButtons state id)
 
 itemButtons :: State -> Int -> [Html]
 itemButtons state id
+  | state == minBound && state == maxBound = [editButton state id, deleteButton state id]
   | state == minBound = [moveRightButton state id, editButton state id, deleteButton state id]
   | state == maxBound = [moveLeftButton state id, editButton state id, deleteButton state id]
   | otherwise = [moveLeftButton state id, moveRightButton state id, editButton state id, deleteButton state id]
